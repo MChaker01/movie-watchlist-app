@@ -1,21 +1,40 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
-const connectDB = require("./config/db");
+// Import required packages
+const express = require("express"); // Web framework for building REST APIs
+const cors = require("cors"); // Enable Cross-Origin Resource Sharing (frontend-backend communication)
+require("dotenv").config(); // Load environment variables from .env file
+const connectDB = require("./config/db"); // Database connection function
 
+// Initialize Express application
 const app = express();
 
-const authRoutes = require("./routes/authRoutes");
+// Import route modules
+const authRoutes = require("./routes/authRoutes"); // Authentication routes (register, login, getMe)
+const movieRoutes = require("./routes/movieRoutes"); // Movie routes (search, details)
 
+// Middleware Configuration
+// Enable CORS - allows frontend (React) to make requests to backend
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
+
+// Parse incoming JSON data in request body
 app.use(express.json());
+
+// Parse URL-encoded data (form submissions)
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/auth/", authRoutes);
+// Route Mounting
+// All auth routes will be prefixed with /api/auth
+// Example: POST /api/auth/register, POST /api/auth/login
+app.use("/api/auth", authRoutes);
 
+// All movie routes will be prefixed with /api/movies
+// Example: GET /api/movies/search, GET /api/movies/:tmdbId
+app.use("/api/movies", movieRoutes);
+
+// Connect to MongoDB database, then start server
 connectDB().then(() => {
-  const PORT = process.env.PORT;
+  const PORT = process.env.PORT || 5000; // Use port from .env or default to 5000
 
+  // Start Express server and listen for incoming requests
   app.listen(PORT, () => {
     console.log(`Server is running on Port : ${PORT}`);
     console.log(`http://localhost:${PORT}`);
