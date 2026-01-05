@@ -10,6 +10,7 @@ const app = express();
 // Import route modules
 const authRoutes = require("./routes/authRoutes"); // Authentication routes (register, login, getMe)
 const movieRoutes = require("./routes/movieRoutes"); // Movie routes (search, details)
+const watchlistRoutes = require("./routes/watchlistRoutes"); // Watchlist routes (addTowatchlist, getWatchlist, updateWatchlist, deleteFromWatchlist)
 
 // Middleware Configuration
 // Enable CORS - allows frontend (React) to make requests to backend
@@ -29,6 +30,10 @@ app.use("/api/auth", authRoutes);
 // All movie routes will be prefixed with /api/movies
 // Example: GET /api/movies/search, GET /api/movies/:tmdbId
 app.use("/api/movies", movieRoutes);
+
+// All watchlist routes will be prefixed with /api/watchlist
+// Example: POST /api/watchlist, GET /api/watchlist, PATCH /api/watchlist/:id
+app.use("/api/watchlist", watchlistRoutes);
 
 // Connect to MongoDB database, then start server
 connectDB().then(() => {
