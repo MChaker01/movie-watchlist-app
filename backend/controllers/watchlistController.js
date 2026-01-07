@@ -5,7 +5,7 @@ const addToWatchlist = async (req, res) => {
     // 1. Extract userId from req.user (added by protect middleware)
     const userId = req.user._id; // Get from middleware
     // 2. Extract movie data from req.body (tmdbId, title, posterPath, releaseDate)
-    const { tmdbId, title, posterPath, releaseDate, watched } = req.body;
+    const { tmdbId, title, posterPath, releaseDate } = req.body;
     // 3. Create watchlist item in database
     const watchlist = await Watchlist.create({
       userId,
@@ -21,6 +21,11 @@ const addToWatchlist = async (req, res) => {
     // Handle duplicate error (code 11000)
     if (error.code === 11000) {
       return res.status(409).json({ message: "Movie already in watchlist" });
+    }
+
+    // Handle validation error
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
     }
     console.error("Error adding to watchlist:", error.message);
     return res.status(500).json({ message: "Failed to add to watchlist" });

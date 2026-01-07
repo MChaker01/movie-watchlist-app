@@ -13,6 +13,7 @@ const reviewSchema = mongoose.Schema(
     },
     reviewText: {
       type: String,
+      trim: true,
     },
     rating: {
       type: Number,
@@ -27,11 +28,10 @@ const reviewSchema = mongoose.Schema(
 
 reviewSchema.pre("save", function (next) {
   // 'this' refers to the document being saved
-  if (!this.reviewText && !this.rating) {
+  if ((!this.reviewText || this.reviewText.trim() === "") && !this.rating) {
     // If BOTH are missing, throw error
-    return next(new Error("Review must include either text or rating"));
+    throw new Error("Review must include either text or rating");
   }
-  next(); // Validation passed, continue saving
 });
 
 const Review = mongoose.model("Review", reviewSchema);

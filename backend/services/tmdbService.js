@@ -53,7 +53,14 @@ const searchMovies = async (query) => {
     return movies;
   } catch (error) {
     console.error("Error searching movies:", error.message);
-    throw new Error("Failed to search movies from TMDB");
+
+    if (error.response?.status === 401) {
+      throw new Error("Failed to search movies from TMDB");
+    }
+
+    return res.status(500).json({
+      message: "Failed to search movies. Please try again later.",
+    });
   }
 };
 
