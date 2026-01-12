@@ -35,14 +35,25 @@ const searchMovies = async (query) => {
     //   { id: 68718, title: "Inception: The Cobol Job", poster_path: "/def.jpg", ... }
     // ]
 
+    const ANIMATION_GENRE_ID = 16;
+
     // Transform EACH movie using .map()
-    const movies = results.map((movie) => ({
-      tmdbId: movie.id,
-      title: movie.title,
-      posterPath: movie.poster_path,
-      releaseDate: movie.release_date,
-      overview: movie.overview,
-    }));
+    const movies = results
+      .filter((movie) => {
+        const hasPoster = movie.poster_path;
+        const isNotAdult = !movie.adult;
+        const isAnimation =
+          movie.genre_ids && movie.genre_ids.includes(ANIMATION_GENRE_ID);
+
+        return hasPoster && isNotAdult && isAnimation;
+      })
+      .map((movie) => ({
+        tmdbId: movie.id,
+        title: movie.title,
+        posterPath: movie.poster_path,
+        releaseDate: movie.release_date,
+        overview: movie.overview,
+      }));
     // after .map() :
     // movies = [
     //   { tmdbId: 27205, title: "Inception", posterPath: "/abc.jpg", ... },
@@ -54,13 +65,13 @@ const searchMovies = async (query) => {
   } catch (error) {
     console.error("Error searching movies:", error.message);
 
+    // If it's a specific API error, throw a custom message
     if (error.response?.status === 401) {
-      throw new Error("Failed to search movies from TMDB");
+      throw new Error("Invalid TMDB API Key");
     }
 
-    return res.status(500).json({
-      message: "Failed to search movies. Please try again later.",
-    });
+    // Otherwise, throw the error so the controller handles it
+    throw error;
   }
 };
 
