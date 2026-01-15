@@ -13,7 +13,11 @@ const searchMovies = async (query) => {
   try {
     // GET request to /search/movie
     const response = await tmdbAPI.get("/search/movie", {
-      params: { query }, // Adds ?query=inception to URL
+      params: {
+        query,
+        language: "en-US", // Return English results
+        with_original_language: "en",
+      }, // Adds ?query=inception to URL
     });
 
     // Mapping response to clean format
@@ -35,17 +39,22 @@ const searchMovies = async (query) => {
     //   { id: 68718, title: "Inception: The Cobol Job", poster_path: "/def.jpg", ... }
     // ]
 
-    const ANIMATION_GENRE_ID = 16;
+    // const ANIMATION_GENRE_ID = 16;
+    const SAFE_GENRES = [16, 10751, 12, 14, 878, 28]; // Animation, Family, Adventure, Fantasy, Sci-Fi
 
     // Transform EACH movie using .map()
     const movies = results
       .filter((movie) => {
         const hasPoster = movie.poster_path;
         const isNotAdult = !movie.adult;
-        const isAnimation =
-          movie.genre_ids && movie.genre_ids.includes(ANIMATION_GENRE_ID);
+        const isEnglish = movie.original_language === "en"; // Double-check at filter level
 
-        return hasPoster && isNotAdult && isAnimation;
+        // Must have at least one safe genre
+        const hasSafeGenre =
+          movie.genre_ids &&
+          movie.genre_ids.some((id) => SAFE_GENRES.includes(id));
+
+        return hasPoster && isNotAdult && hasSafeGenre && isEnglish;
       })
       .map((movie) => ({
         tmdbId: movie.id,

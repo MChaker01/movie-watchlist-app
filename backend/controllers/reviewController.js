@@ -87,7 +87,7 @@ const updateReview = async (req, res) => {
         .status(400)
         .json({ message: "Review must include either text or rating" });
     }
-    
+
     // 3. Find and update (MUST match both _id AND userId for security)
     const updatedReview = await Review.findOneAndUpdate(
       { _id: id, userId: req.user._id },
@@ -102,6 +102,9 @@ const updateReview = async (req, res) => {
     return res.status(200).json(updatedReview);
   } catch (error) {
     console.error("Error while updating review", error);
+    if (error.name === "CastError" || error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
     return res.status(500).json({ message: "Error while updating review" });
   }
 };
