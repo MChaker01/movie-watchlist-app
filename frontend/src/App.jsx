@@ -4,13 +4,16 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Watchlist from "./pages/Watchlist";
 import SearchMovies from "./pages/SearchMovies";
+import GuestRoute from "./components/GuestRoute";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route element={<GuestRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
         <Route path="/" element={<SearchMovies />} />
 
         {/* Protected routes wrapped in ProtectedRoute */}
