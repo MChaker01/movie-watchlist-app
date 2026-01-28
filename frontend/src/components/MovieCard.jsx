@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router";
 
 const MovieCard = ({
   movie,
@@ -29,6 +30,8 @@ const MovieCard = ({
 
   // Get current user from AuthContext
   const { user } = useAuth();
+
+  const navigate = useNavigate();
 
   // ═══════════════════════════════════════════════════════════
   // DATA PREPARATION
@@ -96,11 +99,18 @@ const MovieCard = ({
     }
   };
 
+  const handleClick = () => {
+    navigate(`/movies/${movie.tmdbId}`);
+  };
+
   // ═══════════════════════════════════════════════════════════
   // RENDER
   // ═══════════════════════════════════════════════════════════
   return (
-    <div className="group relative rounded-2xl overflow-hidden bg-neutral-900 shadow-[0_20px_40px_rgba(0,0,0,0.6)] transition-transform duration-300">
+    <div
+      onClick={handleClick}
+      className="group relative rounded-2xl overflow-hidden bg-neutral-900 shadow-[0_20px_40px_rgba(0,0,0,0.6)] transition-transform duration-300 cursor-pointer"
+    >
       {/* ═══════════════════════════════════════════════════════
           POSTER IMAGE 
       ════════════════════════════════════════════════════════ */}

@@ -27,13 +27,13 @@ api.interceptors.response.use(
       if (token) {
         console.log("Session expired, redirecting to login");
         localStorage.removeItem("token");
-        window.location.href = "/login"; // Force redirect to login
+        window.location.href = "/login"; // Force redirect to login //
       }
 
       // If no token, it's just a failed login attempt - let component handle it
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

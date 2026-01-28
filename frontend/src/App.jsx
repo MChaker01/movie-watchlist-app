@@ -5,6 +5,8 @@ import Register from "./pages/Register";
 import Watchlist from "./pages/Watchlist";
 import SearchMovies from "./pages/SearchMovies";
 import GuestRoute from "./components/GuestRoute";
+import MovieDetails from "./pages/MovieDetails";
+import MyReviews from "./pages/MyReviews";
 
 function App() {
   return (
@@ -15,11 +17,12 @@ function App() {
           <Route path="/register" element={<Register />} />
         </Route>
         <Route path="/" element={<SearchMovies />} />
+        <Route path="/movies/:id" element={<MovieDetails />} />
 
         {/* Protected routes wrapped in ProtectedRoute */}
         <Route element={<ProtectedRoute />}>
           <Route path="/watchlist" element={<Watchlist />} />
-          {/* <Route path="/my-reviews" element={<MyReviews />} /> */}
+          <Route path="/my-reviews" element={<MyReviews />} />
         </Route>
       </Routes>
     </>
