@@ -7,6 +7,11 @@ const MyReviews = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState(null); // Which review we're editing.
+  const [editRating, setEditRating] = useState("");
+  const [editComment, setEditComment] = useState("");
+
   useEffect(() => {
     const fetchReviews = async () => {
       try {
@@ -42,6 +47,57 @@ const MyReviews = () => {
     fetchReviews();
   }, []);
 
+  const handleEditClick = (review) => {
+    setIsModalOpen(true);
+    setEditingReview(review);
+    setEditRating(review.rating || "");
+    setEditComment(review.reviewText || "");
+  };
+
+  const handleDelete = async (reviewId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this review?",
+    );
+    if (!confirmDelete) {
+      return;
+    }
+    try {
+      await api.delete(`/reviews/${reviewId}`);
+      setReviews(reviews.filter((review) => review._id !== reviewId));
+    } catch (error) {
+      console.error("Error while deleting review.", error);
+      setError(error.response?.data?.message || "Error while deleting review.");
+    }
+  };
+
+  const handleSaveEdit = async (e, reviewId) => {
+    e.preventDefault();
+    try {
+      const updateReview = await api.patch(`/reviews/${reviewId}`, {
+        rating: editRating,
+        reviewText: editComment,
+      });
+
+      setReviews(
+        reviews.map((review) =>
+          review._id === reviewId ? updateReview.data : review,
+        ),
+      );
+
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error while editing review.", error);
+      setError(error.response?.data?.message || "Failed to edit this review.");
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingReview(null);
+    setEditRating("");
+    setEditComment("");
+  };
+
   return (
     <div className="min-h-screen bg-linear-to-br from-black via-neutral-900 to-neutral-950 text-white">
       <div className="max-w-6xl mx-auto px-6 py-16">
@@ -72,6 +128,67 @@ const MyReviews = () => {
               <span className="text-white font-medium">{reviews.length}</span>{" "}
               reviews.
             </p>
+
+            {isModalOpen && (
+              <div
+                className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50"
+                onClick={handleCloseModal}
+              >
+                <div
+                  className="bg-neutral-900 border border-white/10 rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-2xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <h2 className="text-2xl font-semibold mb-6">Edit Review</h2>
+
+                  <form onSubmit={(e) => handleSaveEdit(e, editingReview._id)}>
+                    {/* Rating Input */}
+                    <div className="mb-6">
+                      <label className="block text-sm text-neutral-400 mb-2">
+                        Rating (1–10)
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={editRating || ""}
+                        onChange={(e) => setEditRating(e.target.value)}
+                        className="w-24 bg-transparent border-b border-neutral-700 px-2 py-1 text-white focus:outline-none focus:border-amber-400 transition"
+                      />
+                    </div>
+
+                    {/* Comment Textarea */}
+                    <div className="mb-6">
+                      <label className="block text-sm text-neutral-400 mb-2">
+                        Your thoughts
+                      </label>
+                      <textarea
+                        value={editComment}
+                        onChange={(e) => setEditComment(e.target.value)}
+                        className="w-full h-32 bg-transparent border border-neutral-800 rounded-xl p-4 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400 transition resize-none"
+                        placeholder="Write your thoughts..."
+                      />
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex gap-4 justify-end">
+                      <button
+                        type="button"
+                        onClick={handleCloseModal}
+                        className="px-6 py-2 rounded-xl bg-neutral-800 text-white hover:bg-neutral-700 transition"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-6 py-2 rounded-xl bg-linear-to-r from-amber-500 to-red-500 text-black font-semibold hover:opacity-90 transition"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-6">
               {reviews.map((review) => {
@@ -133,6 +250,35 @@ const MyReviews = () => {
                             </span>
                           )}
                         </p>
+
+                        <div className="mt-6 flex items-center gap-3">
+                          <button
+                            onClick={() => handleEditClick(review)}
+                            className="
+      inline-flex items-center gap-2
+      px-4 py-2 rounded-lg
+      border border-white/10
+      text-sm text-neutral-300
+      hover:bg-white/10 hover:text-white
+      transition cursor-pointer
+    "
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(review._id)}
+                            className="
+      inline-flex items-center gap-2
+      px-4 py-2 rounded-lg
+      border border-red-500/30
+      text-sm text-red-400
+      hover:bg-red-500/10 hover:text-red-300
+      transition cursor-pointer
+    "
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
