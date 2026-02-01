@@ -11,7 +11,7 @@ import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <>
+    <div className="min-h-screen overflow-x-hidden">
       <Navbar />
       <Routes>
         <Route element={<GuestRoute />}>
@@ -27,7 +27,7 @@ function App() {
           <Route path="/my-reviews" element={<MyReviews />} />
         </Route>
       </Routes>
-    </>
+    </div>
   );
 }
 

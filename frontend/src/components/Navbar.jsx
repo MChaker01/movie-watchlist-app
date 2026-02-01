@@ -31,7 +31,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-neutral-950 border-b border-white/10 sticky top-0 z-40 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-y-4">
         {/* Logo/Brand */}
         <Link
           to="/"
@@ -41,7 +41,7 @@ const Navbar = () => {
         </Link>
 
         {/* Navigation Links */}
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6 w-full sm:w-auto">
           <Link
             to="/"
             className={`text-sm font-medium transition ${
@@ -65,6 +65,7 @@ const Navbar = () => {
               >
                 Watchlist
               </Link>
+
               <Link
                 to="/my-reviews"
                 className={`text-sm font-medium transition ${
@@ -76,13 +77,14 @@ const Navbar = () => {
                 My Reviews
               </Link>
 
-              <div className="flex items-center gap-4 ml-4 pl-4 border-l border-white/10">
+              <div className="flex items-center gap-3 sm:ml-4 sm:pl-4 sm:border-l sm:border-white/10 w-full sm:w-auto">
                 <span className="text-sm text-neutral-400">
                   Hello,{" "}
                   <span className="text-white font-medium">
                     {user.username}
                   </span>
                 </span>
+
                 <button
                   onClick={logout}
                   className="text-sm px-4 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition"
@@ -99,6 +101,7 @@ const Navbar = () => {
               >
                 Login
               </Link>
+
               <Link
                 to="/register"
                 className="text-sm px-4 py-1.5 rounded-lg bg-amber-500 text-black font-semibold hover:bg-amber-400 transition"
