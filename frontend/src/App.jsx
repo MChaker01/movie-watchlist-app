@@ -7,10 +7,12 @@ import SearchMovies from "./pages/SearchMovies";
 import GuestRoute from "./components/GuestRoute";
 import MovieDetails from "./pages/MovieDetails";
 import MyReviews from "./pages/MyReviews";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <>
+      <Navbar />
       <Routes>
         <Route element={<GuestRoute />}>
           <Route path="/login" element={<Login />} />
