@@ -75,14 +75,14 @@ const MovieDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white pt-px">
       {loading && (
         <div className="flex justify-center py-32">
           <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 
-      {error && (
+      {error && loading === false && movie === null && (
         <div className="max-w-4xl mx-auto mt-10 rounded-xl bg-red-500/10 border border-red-500/30 px-6 py-4 text-red-300">
           {error}
         </div>
@@ -144,6 +144,12 @@ const MovieDetails = () => {
                 className="max-w-3xl rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-8 shadow-[0_0_60px_rgba(0,0,0,0.6)]"
               >
                 <h2 className="text-2xl font-semibold mb-6">Add your review</h2>
+
+                {error && (
+                  <div className="mb-6 rounded-xl bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-300">
+                    {error}
+                  </div>
+                )}
 
                 <div className="mb-6">
                   <label className="block text-sm text-neutral-400 mb-2">
